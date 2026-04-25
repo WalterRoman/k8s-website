@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<!-- Tells the browser this is an HTML5 document -->
+
+<html lang="en">
+<!-- Opens the HTML document. lang="en" sets the language to English for accessibility -->
+
+<head>
+  <!-- The <head> section contains metadata — info about the page, not visible content -->
+
+  <meta charset="UTF-8">
+  <!-- Sets character encoding to UTF-8 so special characters display correctly -->
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Makes the page responsive on mobile — scales to the device width -->
+
+  <title>My K8s Website</title>
+  <!-- The text that appears on the browser tab -->
+
+  <link rel="stylesheet" href="style.css">
+  <!-- Links our external CSS file for styling -->
+
+</head>
+
+<body>
+  <!-- The <body> contains everything visible on the page -->
+
+  <header>
+    <!-- Page header section at the top -->
+    <h1>🚀 Running on Kubernetes</h1>
+    <!-- Main heading of the page -->
+    <p class="subtitle">Deployed with k3s on Fedora Linux</p>
+    <!-- Subtitle below the heading -->
+  </header>
+
+  <main>
+    <!-- Main content area of the page -->
+
+    <section class="info-cards">
+      <!-- A section containing info cards -->
+
+      <div class="card">
+        <!-- Individual card -->
+        <h2>🖥️ Server</h2>
+        <p>Fedora Linux 42</p>
+        <p>IP: 192.168.0.15</p>
+      </div>
+
+      <div class="card">
+        <h2>⚙️ Orchestration</h2>
+        <p>k3s Kubernetes</p>
+        <p>Version: v1.34.6</p>
+      </div>
+
+      <div class="card">
+        <h2>🐳 Container</h2>
+        <p>Docker + containerd</p>
+        <p>Nginx web server</p>
+      </div>
+
+      <div class="card">
+        <h2>🔄 CI/CD</h2>
+        <p>GitHub Actions</p>
+        <p>Auto-deploy on push</p>
+      </div>
+
+    </section>
+    <!-- End of info-cards section -->
+
+    <section class="status">
+      <!-- Status section showing live info -->
+      <h2>Live Status</h2>
+      <div id="status-box">
+        <!-- This div will be updated by JavaScript -->
+        <p>⏳ Loading status...</p>
+      </div>
+    </section>
+
+  </main>
+  <!-- End of main content -->
+
+  <footer>
+    <!-- Footer at the bottom of the page -->
+    <p>Built by Walter · Powered by Kubernetes · Deployed from GitHub</p>
+  </footer>
+
+  <script src="app.js"></script>
+  <!-- Links our JavaScript file — placed at the bottom so HTML loads first -->
+
+</body>
+</html>
