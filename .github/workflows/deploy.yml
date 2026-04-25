@@ -1,0 +1,107 @@
+# ── DEPLOY.YML ──
+# This is the GitHub Actions CI/CD Pipeline file.
+# GitHub reads this file automatically every time you push code.
+# It will: build your Docker image, push it to GitHub Container Registry,
+# then SSH into your Fedora server and redeploy the website automatically.
+
+name: Build and Deploy
+# name: what this workflow is called — shows up in the GitHub Actions tab
+
+# ── TRIGGER ──
+on:
+  push:
+    branches:
+      - main
+# on.push.branches: this workflow runs automatically when you push to the main branch
+# Any push to any other branch will be ignored
+
+jobs:
+# jobs: the list of tasks this workflow will run
+
+  build-and-deploy:
+  # build-and-deploy: the name of our single job (contains all steps)
+
+    runs-on: ubuntu-latest
+    # runs-on: the type of machine GitHub uses to run this job
+    # ubuntu-latest = a fresh Ubuntu Linux virtual machine hosted by GitHub
+    # It's created fresh for every run, then destroyed when done
+
+    permissions:
+      contents: read
+      # contents: read — allows the job to read your repo code
+      packages: write
+      # packages: write — allows pushing Docker images to GitHub Container Registry
+
+    steps:
+    # steps: the list of actions this job runs in order, top to bottom
+
+    # ── STEP 1: Checkout code ──
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      # uses: pulls in a pre-built GitHub Action
+      # actions/checkout@v4 = official action that downloads your repo code
+      # onto the Ubuntu machine so the next steps can use it
+
+    # ── STEP 2: Log in to GitHub Container Registry ──
+    - name: Log in to GitHub Container Registry
+      uses: docker/login-action@v3
+      # docker/login-action@v3 = official Docker login action
+      with:
+        registry: ghcr.io
+        # registry: ghcr.io = GitHub Container Registry address
+        username: ${{ github.actor }}
+        # github.actor = automatically set to your GitHub username (WalterRoman)
+        password: ${{ secrets.GHCR_TOKEN }}
+        # secrets.GHCR_TOKEN = the GitHub token you added to repo secrets
+        # secrets are never shown in logs — GitHub hides them automatically
+
+    # ── STEP 3: Build Docker image ──
+    - name: Build Docker image
+      run: |
+        docker build -t ghcr.io/walterroman/k8s-website:latest .
+      # run: executes a shell command on the Ubuntu machine
+      # docker build = reads your Dockerfile and builds the image
+      # -t = tag (name) for the image
+      # ghcr.io/walterroman/k8s-website:latest = full image name including registry
+      # . = use the Dockerfile in the current folder
+
+    # ── STEP 4: Push Docker image to GitHub Container Registry ──
+    - name: Push Docker image
+      run: |
+        docker push ghcr.io/walterroman/k8s-website:latest
+      # docker push = uploads the built image to GitHub Container Registry
+      # Your Fedora server will pull this image when deploying
+
+    # ── STEP 5: SSH into Fedora and deploy ──
+    - name: Deploy to Fedora server
+      uses: appleboy/ssh-action@v1.0.3
+      # appleboy/ssh-action = a popular action for running commands over SSH
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        # SSH_HOST = 192.168.0.15 (your Fedora server IP)
+        username: ${{ secrets.SSH_USER }}
+        # SSH_USER = walt (your Fedora username)
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        # SSH_PRIVATE_KEY = the private key we generated earlier
+        script: |
+          # Everything below runs ON your Fedora server via SSH
+
+          # Log in to GitHub Container Registry from Fedora
+          echo ${{ secrets.GHCR_TOKEN }} | sudo docker login ghcr.io -u walterroman --password-stdin
+          # echo pipes the token into docker login
+          # --password-stdin = reads password from the pipe (more secure than typing it)
+
+          # Pull the latest Docker image we just pushed
+          sudo docker pull ghcr.io/walterroman/k8s-website:latest
+          # Downloads the newest version of our image onto the Fedora server
+
+          # Tell Kubernetes to use the new image
+          sudo kubectl set image deployment/k8s-website k8s-website=ghcr.io/walterroman/k8s-website:latest
+          # kubectl set image = updates which image a deployment uses
+          # deployment/k8s-website = the deployment we defined in deployment.yaml
+          # k8s-website=... = container name = new image to use
+
+          # Wait for the rollout to complete
+          sudo kubectl rollout status deployment/k8s-website
+          # rollout status = watches the deployment until all pods are running
+          # If it fails, this command will report the error
