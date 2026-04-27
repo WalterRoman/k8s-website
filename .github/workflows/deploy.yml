@@ -83,6 +83,8 @@ jobs:
         # SSH_USER = walt (your Fedora username)
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         # SSH_PRIVATE_KEY = the private key we generated earlier
+        port: 2222
+        # port: 2222 = the custom SSH port you set up on your Fedora server
         script: |
           # Everything below runs ON your Fedora server via SSH
 
