@@ -1,0 +1,139 @@
+/* ── RESET & BASE ── */
+/* Remove default browser spacing so we start clean */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  /* box-sizing: border-box means padding won't add extra width to elements */
+}
+
+/* Set the base font and background for the whole page */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  /* font-family: list of fonts to try in order — uses first available */
+  background: #0f0f1a;
+  /* Dark navy background color */
+  color: #e0e0e0;
+  /* Light gray text so it's readable on dark background */
+  min-height: 100vh;
+  /* min-height: 100vh makes the page at least the full height of the screen */
+}
+
+/* ── HEADER ── */
+header {
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  /* linear-gradient creates a diagonal color fade from dark navy to darker navy */
+  padding: 3rem 2rem;
+  /* padding: top/bottom = 3rem, left/right = 2rem (rem = relative to root font size) */
+  text-align: center;
+  /* Centers all text in the header */
+  border-bottom: 2px solid #0f3460;
+  /* Adds a visible line under the header */
+}
+
+header h1 {
+  font-size: 2.5rem;
+  /* Large font size for the main heading */
+  color: #e94560;
+  /* Bright red-pink accent color */
+  margin-bottom: 0.5rem;
+  /* Adds space below the heading */
+}
+
+.subtitle {
+  color: #a0a0b0;
+  /* Muted gray-blue for the subtitle */
+  font-size: 1.1rem;
+}
+
+/* ── MAIN CONTENT ── */
+main {
+  max-width: 1100px;
+  /* Limits the content width so it doesn't stretch too wide on big screens */
+  margin: 0 auto;
+  /* margin: 0 auto centers the main block horizontally */
+  padding: 3rem 2rem;
+}
+
+/* ── INFO CARDS ── */
+.info-cards {
+  display: grid;
+  /* CSS Grid layout — arranges children in a grid */
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  /* auto-fit: fills as many columns as fit
+     minmax(220px, 1fr): each column is at least 220px, max is equal share of space */
+  gap: 1.5rem;
+  /* Space between grid items */
+  margin-bottom: 3rem;
+}
+
+.card {
+  background: #1a1a2e;
+  /* Card background, slightly lighter than the page */
+  border: 1px solid #0f3460;
+  /* Subtle border around each card */
+  border-radius: 12px;
+  /* Rounded corners */
+  padding: 1.5rem;
+  text-align: center;
+  transition: transform 0.2s, border-color 0.2s;
+  /* transition: smooth animation when transform or border-color changes */
+}
+
+/* When mouse hovers over a card */
+.card:hover {
+  transform: translateY(-5px);
+  /* Moves the card 5px upward — gives a "lift" effect */
+  border-color: #e94560;
+  /* Border turns red-pink on hover */
+}
+
+.card h2 {
+  font-size: 1.3rem;
+  margin-bottom: 0.8rem;
+  color: #e94560;
+  /* Accent color for card headings */
+}
+
+.card p {
+  color: #a0a0b0;
+  margin: 0.3rem 0;
+  font-size: 0.95rem;
+}
+
+/* ── STATUS SECTION ── */
+.status {
+  background: #1a1a2e;
+  border: 1px solid #0f3460;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+}
+
+.status h2 {
+  color: #e94560;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+#status-box {
+  background: #0f0f1a;
+  /* Darker background for the status box */
+  border-radius: 8px;
+  padding: 1rem;
+  font-family: monospace;
+  /* monospace font makes it look like a terminal */
+  font-size: 0.95rem;
+  color: #00ff88;
+  /* Bright green — classic terminal/server color */
+}
+
+/* ── FOOTER ── */
+footer {
+  text-align: center;
+  padding: 2rem;
+  color: #505065;
+  /* Muted color for footer text */
+  font-size: 0.85rem;
+  border-top: 1px solid #1a1a2e;
+}
