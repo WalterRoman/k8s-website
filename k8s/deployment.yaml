@@ -2,15 +2,12 @@
 # A Deployment tells Kubernetes HOW to run your container.
 # It manages: how many copies run, what image to use,
 # how to update it, and how to restart it if it crashes.
-
 apiVersion: apps/v1
 # apiVersion: which Kubernetes API handles this resource
 # apps/v1 is the stable API for Deployments
-
 kind: Deployment
 # kind: what type of Kubernetes object this is
 # Deployment = manages running containers (pods)
-
 metadata:
   # metadata: identifying info about this object
   name: k8s-website
@@ -19,66 +16,56 @@ metadata:
     app: k8s-website
     # labels: key-value tags used to organize and select resources
     # app: k8s-website is used by the Service to find these pods
-
 spec:
   # spec: the desired state — what we WANT Kubernetes to do
-
   replicas: 1
   # replicas: how many identical copies (pods) to run at once
   # We use 1 since we only have one server (3.7GB RAM)
   # You could increase this to 2 or 3 for high availability
-
   selector:
     # selector: how this Deployment finds the pods it manages
     matchLabels:
       app: k8s-website
       # must match the labels in the template below
-
   template:
     # template: the blueprint for each pod (container) that gets created
-
     metadata:
       labels:
         app: k8s-website
         # labels on the pod — must match selector.matchLabels above
-
     spec:
       # spec for the pod — defines the containers inside it
-
+      imagePullSecrets:
+        - name: ghcr-secret
+        # ✅ ghcr-secret allows Kubernetes to pull from ghcr.io (private registry)
+        # must be created first with: kubectl create secret docker-registry ghcr-secret
       containers:
-        # containers: list of containers to run in this pod
-        # (we only have one container per pod here)
-
+      # containers: list of containers to run in this pod
+      # (we only have one container per pod here)
         - name: k8s-website
           # name: identifier for this container inside the pod
-
           image: ghcr.io/walterroman/k8s-website:latest
           # image: the Docker image to run
-          # ghcr.io = GitHub Container Registry (where we'll push our image)
-          # YOURGITHUBUSERNAME = replace this with your actual GitHub username
+          # ghcr.io = GitHub Container Registry (where we push our image)
+          # walterroman = your GitHub username
           # k8s-website = the image name
           # latest = always pull the most recent version
-
           imagePullPolicy: Always
           # Always = always pull the latest image from the registry
           # This ensures new deployments always get the newest version
-
           ports:
             - containerPort: 80
-              # containerPort: the port our Nginx container listens on
-              # matches the EXPOSE 80 in our Dockerfile
-
+            # containerPort: the port our Nginx container listens on
+            # matches the EXPOSE 80 in our Dockerfile
           resources:
             # resources: limits how much CPU and RAM this container can use
             # Important since our server only has 3.7GB RAM
-
             requests:
               # requests: minimum resources Kubernetes reserves for this container
               memory: "64Mi"
               # 64Mi = 64 Megabytes of RAM (minimum)
               cpu: "50m"
               # 50m = 50 millicores of CPU (0.05 of one CPU core)
-
             limits:
               # limits: maximum resources this container is allowed to use
               memory: "128Mi"
